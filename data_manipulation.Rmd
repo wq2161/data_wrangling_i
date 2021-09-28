@@ -1,5 +1,5 @@
 ---
-title: "Data Import"
+title: "Data Manipulation"
 output: github_document
 ---
 
@@ -24,7 +24,7 @@ pups_df = janitor::clean_names(pups_df)
 
 ## `select`
 
-Let's select some columns
+Let's select some columns!
 
 ```{r}
 select(litters_df, group, litter_number)
@@ -77,72 +77,24 @@ drop_na(litters_df, gd0_weight)
 ```
 
 
+## `mutate`
 
-## Take a look at the data
-
-Printing in the console.
-
-```{r}
-litters_df
-```
+Let's add or change columns!
 
 ```{r}
-head(litters_df)
-tail(litters_df)
-```
-
-```{r}
-skimr::skim(litters_df)
+mutate(
+  litters_df, 
+  weight_change = gd18_weight - gd0_weight,
+  group = str_to_lower(group))
 ```
 
 
-## Options to read_csv
+## `arange`
 
-Check out `?read_csv()` for more information.
-
-```{r}
-litters_df = read_csv("data/FAS_litters.csv", skip = 10, col_names = FALSE)
-```
+Let's rearrange the data.
 
 ```{r}
-litters_df = read_csv("data/FAS_litters.csv", na = c("", "NA", ".", 999))
-```
-
-
-## Other file format
-
-Read in an excel file.
-
-```{r}
-mlb_df = read_excel("data/mlb11.xlsx", range = "A1:F7")
-mlb_df
-```
-
-Read in a SAS file.
-
-```{r}
-pulse_df = read_sas("data/public_pulse_data.sas7bdat")
-pulse_df
-```
-
-
-## Comparison with Base R
-
-what about `read.csv` ...?
-
-```{r}
-litters_base = read.csv("data/FAS_litters.csv")
-litters_readr = read_csv("data/FAS_litters.csv")
-
-litters_base
-litters_readr
-```
-
-## Exporting data
-
-Export the mlb sub-table.
-
-```{r}
-write_csv(mlb_df, "data/mlb_subtable.csv")
+arrange(litters_df, desc(gd0_weight))
+arrange(litters_df, gd_of_birth, gd0_weight)
 ```
 
