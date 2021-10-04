@@ -9,6 +9,9 @@ library(readxl)
 library(haven)
 ```
 
+
+never use `gather()`. always use `pivot_longer()`.
+
 ## pivot longer
 
 Load the PULSE data.
@@ -37,6 +40,8 @@ pulse_tidy =
 ```
 
 
+never use `spread()`. always use `pivot_wider()`.
+
 ## pivot_wider
 
 make a results data table
@@ -57,6 +62,8 @@ analysis_df %>%
   knitr::kable()
 ```
 
+
+never use `rbind()`. always use `bind_rows()`.
 
 ## bind_rows
 
@@ -83,16 +90,34 @@ lotr_df =
     names_to = "sex",
     values_to = "words"
   ) %>%
-  mutate(race = str_to_lower(race))%>%
+  mutate(race = str_to_lower(race)) %>%
   relocate(movie)
-
-
 ```
 
 
+## joins
 
+Look at FAS data. This imports and cleans litters and pups data.
 
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv") %>%
+  janitor::clean_names() %>%
+  separate(group, int = c("dose", "day_of_tx"), 3) %>%
+  relocate(litter_number) %>%
+  mutate(dose = str_to_lower(dose))
 
+pups_df = 
+  read_csv("data/FAS_pups.csv") %>%
+  janitor::clean_names() %>%
+  mutate(sex = recode(sex, `1` = "male", `2` = "female"))
+```
 
+Let's join these up!
 
-never use `rbind()`. always use `bind_rows()`.
+```{r}
+fas_df =
+  left_join(pups_df, litters_df, by = "litter_number") %>%
+  relocate(litter_number, dose, day_of_tx)
+```
+
